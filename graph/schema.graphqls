@@ -1,0 +1,33 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Query {
+    getFitnessData: FitnessData!
+}
+
+type Mutation {
+    updateFitnessData(input: FitnessDataInput!): FitnessData!
+
+}
+
+type FitnessData {
+    userId: Int!
+    date: Int!
+    stepCount: Int!
+    gym: Boolean!
+    Sport: Boolean!
+    sportType: String
+    duration: Int!   
+}
+
+
+input FitnessDataInput {
+    userId: Int!
+    date: Int!
+    stepCount: Int!
+    gym: Boolean!
+    Sport: Boolean!
+    sportType: String
+    duration: Int!   
+}
