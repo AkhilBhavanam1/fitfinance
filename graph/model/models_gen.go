@@ -9,21 +9,23 @@ import (
 type FitnessData struct {
 	UserID    int       `json:"userId"`
 	Date      time.Time `json:"date"`
+	Weight    float64   `json:"weight"`
 	StepCount int       `json:"stepCount"`
 	Gym       bool      `json:"gym"`
 	Sport     bool      `json:"sport"`
 	SportType *string   `json:"sportType,omitempty"`
-	Duration  int       `json:"duration"`
+	Duration  *int      `json:"duration,omitempty"`
 }
 
 type FitnessDataInput struct {
 	UserID    int     `json:"userId"`
 	Date      string  `json:"date"`
+	Weight    float64 `json:"weight"`
 	StepCount int     `json:"stepCount"`
 	Gym       bool    `json:"gym"`
 	Sport     bool    `json:"sport"`
 	SportType *string `json:"sportType,omitempty"`
-	Duration  int     `json:"duration"`
+	Duration  *int    `json:"duration,omitempty"`
 }
 
 type Mutation struct {
@@ -46,6 +48,7 @@ type UserInput struct {
 type WeeklyFitnessData struct {
 	StepCount int       `json:"stepCount"`
 	Gym       int       `json:"gym"`
+	Weight    float64   `json:"weight"`
 	Sport     int       `json:"sport"`
 	Duration  []*int    `json:"duration,omitempty"`
 	SportType []*string `json:"sportType,omitempty"`

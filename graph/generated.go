@@ -56,6 +56,7 @@ type ComplexityRoot struct {
 		SportType func(childComplexity int) int
 		StepCount func(childComplexity int) int
 		UserID    func(childComplexity int) int
+		Weight    func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -80,6 +81,7 @@ type ComplexityRoot struct {
 		Sport     func(childComplexity int) int
 		SportType func(childComplexity int) int
 		StepCount func(childComplexity int) int
+		Weight    func(childComplexity int) int
 	}
 }
 
@@ -158,6 +160,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.FitnessData.UserID(childComplexity), true
+
+	case "FitnessData.weight":
+		if e.complexity.FitnessData.Weight == nil {
+			break
+		}
+
+		return e.complexity.FitnessData.Weight(childComplexity), true
 
 	case "Mutation.updateFitnessData":
 		if e.complexity.Mutation.UpdateFitnessData == nil {
@@ -257,6 +266,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.WeeklyFitnessData.StepCount(childComplexity), true
+
+	case "WeeklyFitnessData.weight":
+		if e.complexity.WeeklyFitnessData.Weight == nil {
+			break
+		}
+
+		return e.complexity.WeeklyFitnessData.Weight(childComplexity), true
 
 	}
 	return 0, false
@@ -570,6 +586,50 @@ func (ec *executionContext) fieldContext_FitnessData_date(_ context.Context, fie
 	return fc, nil
 }
 
+func (ec *executionContext) _FitnessData_weight(ctx context.Context, field graphql.CollectedField, obj *model.FitnessData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FitnessData_weight(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Weight, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FitnessData_weight(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FitnessData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _FitnessData_stepCount(ctx context.Context, field graphql.CollectedField, obj *model.FitnessData) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_FitnessData_stepCount(ctx, field)
 	if err != nil {
@@ -764,14 +824,11 @@ func (ec *executionContext) _FitnessData_duration(ctx context.Context, field gra
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(*int)
 	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_FitnessData_duration(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -830,6 +887,8 @@ func (ec *executionContext) fieldContext_Mutation_updateFitnessData(ctx context.
 				return ec.fieldContext_FitnessData_userId(ctx, field)
 			case "date":
 				return ec.fieldContext_FitnessData_date(ctx, field)
+			case "weight":
+				return ec.fieldContext_FitnessData_weight(ctx, field)
 			case "stepCount":
 				return ec.fieldContext_FitnessData_stepCount(ctx, field)
 			case "gym":
@@ -901,6 +960,8 @@ func (ec *executionContext) fieldContext_Query_getFitnessData(ctx context.Contex
 				return ec.fieldContext_FitnessData_userId(ctx, field)
 			case "date":
 				return ec.fieldContext_FitnessData_date(ctx, field)
+			case "weight":
+				return ec.fieldContext_FitnessData_weight(ctx, field)
 			case "stepCount":
 				return ec.fieldContext_FitnessData_stepCount(ctx, field)
 			case "gym":
@@ -972,6 +1033,8 @@ func (ec *executionContext) fieldContext_Query_getWeeklyFitnessData(ctx context.
 				return ec.fieldContext_WeeklyFitnessData_stepCount(ctx, field)
 			case "gym":
 				return ec.fieldContext_WeeklyFitnessData_gym(ctx, field)
+			case "weight":
+				return ec.fieldContext_WeeklyFitnessData_weight(ctx, field)
 			case "sport":
 				return ec.fieldContext_WeeklyFitnessData_sport(ctx, field)
 			case "duration":
@@ -1375,6 +1438,50 @@ func (ec *executionContext) fieldContext_WeeklyFitnessData_gym(_ context.Context
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WeeklyFitnessData_weight(ctx context.Context, field graphql.CollectedField, obj *model.WeeklyFitnessData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WeeklyFitnessData_weight(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Weight, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WeeklyFitnessData_weight(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WeeklyFitnessData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
 		},
 	}
 	return fc, nil
@@ -3286,7 +3393,7 @@ func (ec *executionContext) unmarshalInputFitnessDataInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"userId", "date", "stepCount", "gym", "sport", "sportType", "duration"}
+	fieldsInOrder := [...]string{"userId", "date", "weight", "stepCount", "gym", "sport", "sportType", "duration"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3307,6 +3414,13 @@ func (ec *executionContext) unmarshalInputFitnessDataInput(ctx context.Context, 
 				return it, err
 			}
 			it.Date = data
+		case "weight":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("weight"))
+			data, err := ec.unmarshalNFloat2float64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Weight = data
 		case "stepCount":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stepCount"))
 			data, err := ec.unmarshalNInt2int(ctx, v)
@@ -3337,7 +3451,7 @@ func (ec *executionContext) unmarshalInputFitnessDataInput(ctx context.Context, 
 			it.SportType = data
 		case "duration":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("duration"))
-			data, err := ec.unmarshalNInt2int(ctx, v)
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3404,6 +3518,11 @@ func (ec *executionContext) _FitnessData(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "weight":
+			out.Values[i] = ec._FitnessData_weight(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "stepCount":
 			out.Values[i] = ec._FitnessData_stepCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -3423,9 +3542,6 @@ func (ec *executionContext) _FitnessData(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._FitnessData_sportType(ctx, field, obj)
 		case "duration":
 			out.Values[i] = ec._FitnessData_duration(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3655,6 +3771,11 @@ func (ec *executionContext) _WeeklyFitnessData(ctx context.Context, sel ast.Sele
 			}
 		case "gym":
 			out.Values[i] = ec._WeeklyFitnessData_gym(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "weight":
+			out.Values[i] = ec._WeeklyFitnessData_weight(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -4048,6 +4169,21 @@ func (ec *executionContext) marshalNFitnessData2ᚖfitfinanceᚋgraphᚋmodelᚐ
 func (ec *executionContext) unmarshalNFitnessDataInput2fitfinanceᚋgraphᚋmodelᚐFitnessDataInput(ctx context.Context, v interface{}) (model.FitnessDataInput, error) {
 	res, err := ec.unmarshalInputFitnessDataInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v interface{}) (float64, error) {
+	res, err := graphql.UnmarshalFloatContext(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.SelectionSet, v float64) graphql.Marshaler {
+	res := graphql.MarshalFloatContext(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return graphql.WrapContextMarshaler(ctx, res)
 }
 
 func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {

@@ -30,7 +30,7 @@ type FitnessData {
     gym: Boolean!
     sport: Boolean!
     sportType: String
-    duration: Int!   
+    duration: Int  
 }
 
 
@@ -42,7 +42,7 @@ input FitnessDataInput {
     gym: Boolean!
     sport: Boolean!
     sportType: String
-    duration: Int!   
+    duration: Int   
 }
 
 input UserInput {

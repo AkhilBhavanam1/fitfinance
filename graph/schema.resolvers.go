@@ -79,14 +79,14 @@ func (r *queryResolver) GetWeeklyFitnessData(ctx context.Context, input int) (*m
 	log.Info("Fetching fitness data")
 	collection := r.DbClient.Database("Fitness").Collection("tracking_data")
 
-	now := time.Now()
-	weekday := int(now.Weekday())
-	startOfWeek := time.Now().AddDate(0, 0, -weekday)
+	currentTime := time.Now().UTC().Truncate(24 * time.Hour)
+	weekday := int(currentTime.Weekday())
+	startOfWeek := currentTime.AddDate(0, 0, -weekday)
 	filter := bson.D{
 		{"userid", input},
 		{"date", bson.D{
 			{"$gte", startOfWeek},
-			{"$lte", now},
+			{"$lte", currentTime},
 		}},
 	}
 	cursor, err := collection.Find(ctx, filter)
@@ -107,9 +107,12 @@ func (r *queryResolver) GetWeeklyFitnessData(ctx context.Context, input int) (*m
 		if fitnessData.Gym {
 			weeklyData.Gym += 1
 		}
+		if fitnessData.Sport {
+			weeklyData.Sport += 1
+		}
 		if fitnessData.Sport && fitnessData.SportType != nil {
 			weeklyData.SportType = append(weeklyData.SportType, fitnessData.SportType)
-			weeklyData.Duration = append(weeklyData.Duration, &fitnessData.Duration)
+			weeklyData.Duration = append(weeklyData.Duration, fitnessData.Duration)
 		}
 	}
 
