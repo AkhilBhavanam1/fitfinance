@@ -7,20 +7,28 @@ package graph
 import (
 	"context"
 	"fitfinance/graph/model"
+	"time"
 
 	"github.com/labstack/gommon/log"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // UpdateFitnessData is the resolver for the updateFitnessData field.
 func (r *mutationResolver) UpdateFitnessData(ctx context.Context, input model.FitnessDataInput) (*model.FitnessData, error) {
 	log.Info("Updating fitness data")
-	collection := r.DbClient.Database("Fitness").Collection("FitnessData")
+	collection := r.DbClient.Database("Fitness").Collection("tracking_data")
 
-	log.Info("Collection", collection)
+	layout := "02-01-2006" // dd-mm-yyyy
+
+	date, err := time.Parse(layout, input.Date)
+	if err != nil {
+		log.Info("Cannot parse date field")
+	}
+
 	data := &model.FitnessData{
 		UserID:    input.UserID,
-		Date:      input.Date,
+		Date:      date,
 		StepCount: input.StepCount,
 		Gym:       input.Gym,
 		Sport:     input.Sport,
@@ -29,22 +37,25 @@ func (r *mutationResolver) UpdateFitnessData(ctx context.Context, input model.Fi
 		data.SportType = input.SportType
 		data.Duration = input.Duration
 	}
-	log.Info(data)
-	result, err := collection.InsertOne(ctx, data)
+	query := bson.D{
+		{"userid", input.UserID},
+		{"date", date},
+	}
+	opts := options.FindOneAndUpdate().SetUpsert(true)
+	collection.FindOneAndUpdate(ctx, query, bson.M{"$set": data}, opts)
 	if err != nil {
 		log.Error("Error occured while inserting to db")
-	} else {
-		log.Infof("Inserted with id:", result.InsertedID)
 	}
 	return data, err
 }
 
 // GetFitnessData is the resolver for the getFitnessData field.
-func (r *queryResolver) GetFitnessData(ctx context.Context) (*model.FitnessData, error) {
+func (r *queryResolver) GetFitnessData(ctx context.Context, input model.UserInput) (*model.FitnessData, error) {
 	log.Info("Fetching fitness data")
-	collection := r.DbClient.Database("Fitness").Collection("FitnessData")
+	collection := r.DbClient.Database("Fitness").Collection("tracking_data")
 
-	filter := bson.D{{"userid", 1}}
+	filter := bson.D{
+		{"userid", input.UserID}}
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
 		log.Error("Error fetching the fitness data")
@@ -61,6 +72,48 @@ func (r *queryResolver) GetFitnessData(ctx context.Context) (*model.FitnessData,
 	}
 
 	return data, nil
+}
+
+// GetWeeklyFitnessData is the resolver for the getWeeklyFitnessData field.
+func (r *queryResolver) GetWeeklyFitnessData(ctx context.Context, input int) (*model.WeeklyFitnessData, error) {
+	log.Info("Fetching fitness data")
+	collection := r.DbClient.Database("Fitness").Collection("tracking_data")
+
+	now := time.Now()
+	weekday := int(now.Weekday())
+	startOfWeek := time.Now().AddDate(0, 0, -weekday)
+	filter := bson.D{
+		{"userid", input},
+		{"date", bson.D{
+			{"$gte", startOfWeek},
+			{"$lte", now},
+		}},
+	}
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		log.Error("Error fetching the fitness data")
+	}
+
+	var results []model.FitnessData
+	if err = cursor.All(ctx, &results); err != nil {
+		log.Error("Error reading the fitness results")
+	}
+
+	weeklyData := &model.WeeklyFitnessData{
+		SportType: make([]*string, 0),
+	}
+	for _, fitnessData := range results {
+		weeklyData.StepCount += fitnessData.StepCount
+		if fitnessData.Gym {
+			weeklyData.Gym += 1
+		}
+		if fitnessData.Sport && fitnessData.SportType != nil {
+			weeklyData.SportType = append(weeklyData.SportType, fitnessData.SportType)
+			weeklyData.Duration = append(weeklyData.Duration, &fitnessData.Duration)
+		}
+	}
+
+	return weeklyData, nil
 }
 
 // Mutation returns MutationResolver implementation.

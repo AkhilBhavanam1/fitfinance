@@ -5,11 +5,13 @@ import (
 	"fitfinance/db"
 	"fitfinance/graph"
 	"log"
+	"os"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/prakis/loadenv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -21,6 +23,10 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
+	err := loadenv.Load()
+	if err != nil {
+		e.Logger.Error("Unable to fetch .env")
+	}
 	mongoClient := InitializeDb()
 
 	dbs, _ := mongoClient.ListDatabaseNames(context.Background(), bson.D{})
@@ -43,8 +49,9 @@ func main() {
 
 func InitializeDb() *mongo.Client {
 
+	connString := "mongodb+srv://" + os.Getenv("MONGO_USER_NAME") + ":" + os.Getenv("MONGO_PASSWORD") + "@mongodb.mov7z9l.mongodb.net/?retryWrites=true&w=majority&appName=mongodb"
 	helperClient := db.DBHelperClient{
-		ConnString: "mongodb://localhost:32767/",
+		ConnString: connString,
 	}
 
 	err := helperClient.ConnectToDB()

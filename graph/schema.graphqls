@@ -1,9 +1,11 @@
 # GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
+scalar Time
 
 type Query {
-    getFitnessData: FitnessData!
+    getFitnessData(input: UserInput!): FitnessData!
+    getWeeklyFitnessData(input: Int!): WeeklyFitnessData!
 }
 
 type Mutation {
@@ -11,12 +13,22 @@ type Mutation {
 
 }
 
+type WeeklyFitnessData {
+    stepCount: Int!
+    gym: Int!
+    weight: Float!
+    sport: Int!
+    duration: [Int]
+    sportType: [String]
+}
+
 type FitnessData {
     userId: Int!
-    date: Int!
+    date: Time!
+    weight: Float!
     stepCount: Int!
     gym: Boolean!
-    Sport: Boolean!
+    sport: Boolean!
     sportType: String
     duration: Int!   
 }
@@ -24,10 +36,22 @@ type FitnessData {
 
 input FitnessDataInput {
     userId: Int!
-    date: Int!
+    date: String!
+    weight: Float!
     stepCount: Int!
     gym: Boolean!
-    Sport: Boolean!
+    sport: Boolean!
     sportType: String
     duration: Int!   
+}
+
+input UserInput {
+    userId: Int!
+}
+
+type User {
+    userId: Int!
+    firstName: String
+    lastName: String
+    email: String
 }

@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/99designs/gqlgen v0.17.47
 	github.com/labstack/echo/v4 v4.12.0
+	github.com/prakis/loadenv v0.0.0-20240228131234-bdc02abc6710
 	github.com/vektah/gqlparser/v2 v2.5.12
 )
 

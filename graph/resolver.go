@@ -1,6 +1,10 @@
 package graph
 
-import "go.mongodb.org/mongo-driver/mongo"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
+)
 
 // This file will not be regenerated automatically.
 //
@@ -8,4 +12,8 @@ import "go.mongodb.org/mongo-driver/mongo"
 
 type Resolver struct {
 	DbClient *mongo.Client
+}
+
+type Time struct {
+	Time time.Time
 }

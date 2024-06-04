@@ -2,22 +2,26 @@
 
 package model
 
+import (
+	"time"
+)
+
 type FitnessData struct {
-	UserID    int     `json:"userId"`
-	Date      int     `json:"date"`
-	StepCount int     `json:"stepCount"`
-	Gym       bool    `json:"gym"`
-	Sport     bool    `json:"Sport"`
-	SportType *string `json:"sportType,omitempty"`
-	Duration  int     `json:"duration"`
+	UserID    int       `json:"userId"`
+	Date      time.Time `json:"date"`
+	StepCount int       `json:"stepCount"`
+	Gym       bool      `json:"gym"`
+	Sport     bool      `json:"sport"`
+	SportType *string   `json:"sportType,omitempty"`
+	Duration  int       `json:"duration"`
 }
 
 type FitnessDataInput struct {
 	UserID    int     `json:"userId"`
-	Date      int     `json:"date"`
+	Date      string  `json:"date"`
 	StepCount int     `json:"stepCount"`
 	Gym       bool    `json:"gym"`
-	Sport     bool    `json:"Sport"`
+	Sport     bool    `json:"sport"`
 	SportType *string `json:"sportType,omitempty"`
 	Duration  int     `json:"duration"`
 }
@@ -26,4 +30,23 @@ type Mutation struct {
 }
 
 type Query struct {
+}
+
+type User struct {
+	UserID    int     `json:"userId"`
+	FirstName *string `json:"firstName,omitempty"`
+	LastName  *string `json:"lastName,omitempty"`
+	Email     *string `json:"email,omitempty"`
+}
+
+type UserInput struct {
+	UserID int `json:"userId"`
+}
+
+type WeeklyFitnessData struct {
+	StepCount int       `json:"stepCount"`
+	Gym       int       `json:"gym"`
+	Sport     int       `json:"sport"`
+	Duration  []*int    `json:"duration,omitempty"`
+	SportType []*string `json:"sportType,omitempty"`
 }
