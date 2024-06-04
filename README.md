@@ -8,3 +8,6 @@ App to keep track of fitness
 - [ ] Get weekly data on given date
 - [ ] Create Goals in db
 - [ ] Calculate pending actions to get to goals
+- [ ] Containerize and deploy
+- [ ] Develop frontend
+- [ ] Integrate frontend to backend
