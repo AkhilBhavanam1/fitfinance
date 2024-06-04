@@ -1,0 +1,19 @@
+{
+  "dataOnDateInput":{
+    "userId": 2,
+    "date": "04-06-2024"
+  },
+  "input": {
+    "userId": 2,
+    "weight": 77.5,
+    "date": "03-06-2024",
+    "stepCount": 10000,
+    "gym": false,
+    "sport": true,
+    "sportType": "running",
+    "duration": 10
+  },
+  "userInput" : {
+    "userId" : 2
+  }
+}

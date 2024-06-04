@@ -1,0 +1,38 @@
+query weeklyData {
+  getWeeklyFitnessData(input: 2) {
+    stepCount
+    sport
+    sportType
+    duration
+    gym
+  }
+}
+
+query allData($userInput: UserInput!) {
+  getFitnessData(input: $userInput) {
+    stepCount,
+    sport,
+    sportType
+    duration,
+    gym,
+    weight
+  }
+}
+
+mutation updateFitness($input: FitnessDataInput!) {
+  updateFitnessData(input: $input) {
+    stepCount
+    sportType
+    sport
+  }
+}
+
+query getDataOnDate($dataOnDateInput: DataOndateInput!) {
+  getDataOnDate(input: $dataOnDateInput) {
+    stepCount
+    sport
+    sportType
+    gym
+    weight
+  }
+}

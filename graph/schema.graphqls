@@ -6,6 +6,7 @@ scalar Time
 type Query {
     getFitnessData(input: UserInput!): FitnessData!
     getWeeklyFitnessData(input: Int!): WeeklyFitnessData!
+    getDataOnDate(input: DataOndateInput!): FitnessData!
 }
 
 type Mutation {
@@ -33,6 +34,10 @@ type FitnessData {
     duration: Int  
 }
 
+input DataOndateInput {
+    userId: Int!
+    date: String!
+}
 
 input FitnessDataInput {
     userId: Int!

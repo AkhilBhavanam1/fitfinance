@@ -119,6 +119,36 @@ func (r *queryResolver) GetWeeklyFitnessData(ctx context.Context, input int) (*m
 	return weeklyData, nil
 }
 
+// GetDataOnDate is the resolver for the getDataOnDate field.
+func (r *queryResolver) GetDataOnDate(ctx context.Context, input model.DataOndateInput) (*model.FitnessData, error) {
+	log.Info("Fetching fitness data")
+	collection := r.DbClient.Database("Fitness").Collection("tracking_data")
+	layout := "02-01-2006" // dd-mm-yyyy
+
+	date, err := time.Parse(layout, input.Date)
+	if err != nil {
+		log.Info("Cannot parse give date")
+		return nil, err
+	}
+
+	filter := bson.D{
+		{"userid", input.UserID},
+		{"date", date},
+	}
+
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		log.Error("Error fetching the fitness data")
+	}
+
+	var results []model.FitnessData
+	if err = cursor.All(ctx, &results); err != nil {
+		log.Error("Error reading the fitness results")
+	}
+
+	return &results[0], nil
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 

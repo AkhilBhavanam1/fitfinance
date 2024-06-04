@@ -6,6 +6,11 @@ import (
 	"time"
 )
 
+type DataOndateInput struct {
+	UserID int    `json:"userId"`
+	Date   string `json:"date"`
+}
+
 type FitnessData struct {
 	UserID    int       `json:"userId"`
 	Date      time.Time `json:"date"`
