@@ -5,7 +5,7 @@ App to keep track of fitness
 ## TODO
 - [x] Get current week data
 - [x] Get all data
-- [ ] Get data on given date
+- [x] Get data on given date
 - [ ] Get weekly data on given date
 - [ ] Create Goals in db
 - [ ] Calculate pending actions to get to goals
