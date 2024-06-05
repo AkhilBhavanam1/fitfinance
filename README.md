@@ -6,7 +6,7 @@ App to keep track of fitness
 - [x] Get current week data
 - [x] Get all data
 - [x] Get data on given date
-- [ ] Get weekly data on given date
+- [ ] Get weekly stats
 - [ ] Create Goals in db
 - [ ] Calculate pending actions to get to goals
 - [ ] Containerize and deploy
